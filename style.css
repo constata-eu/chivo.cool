@@ -56,6 +56,10 @@ strong {
   color: #fafafa;
 }
 
+.section.dark a {
+  color: #fafafa;
+}
+
 #how_to {
   text-align: center;
   background-image: url("/images/boton_copiar.png");
