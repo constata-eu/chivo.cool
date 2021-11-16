@@ -65,7 +65,7 @@
           update_address_links(address);
           show_message("confirmed", {confirmed_btc_amount: confirmed, confirmed_address: short_address});
         }else{
-          show_message("no_payments", {no_payments_address: address});
+          show_message("no_payments", {no_payments_address: short_address});
           await delay(10000);
           await check_explorers(address);
         }
