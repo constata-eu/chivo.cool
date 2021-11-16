@@ -58,9 +58,17 @@ strong {
 
 #how_to {
   text-align: center;
+  background-image: url("/images/boton_copiar.png");
+  background-size: cover; 
+  min-height: 700px;
+  padding: 0.5em;
 }
-#how_to img {
-  margin: 2em 0;
+#how_to p {
+  text-align: left;
+  margin: 0;
+  padding: 1em;
+  border-radius: 5px;
+  background: rgba(255,255,255,0.95);
 }
 
 button {
@@ -85,7 +93,7 @@ button::-moz-focus-inner {
 
 button.big {
   width: 100%;
-  margin: 1em 0 2em 0;
+  margin: 0 0 2em;
   font-size: 1em;
   padding: 1em;
   background: #e9922b;
