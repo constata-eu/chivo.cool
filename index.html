@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chivo.Cool</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+    <script type="text/javascript" src="address_validator.js"></script>
+    <script type="text/javascript" >
+      window.onload = function(){
+        document.getElementById("paste").onclick = function(){
+          navigator.clipboard.readText().then(clipText => {
+            let address_ok = false;
+            try {
+              address_ok = getAddressInfo(clipText).network == "mainnet";
+            }catch{};
+            
+            if(address_ok) {
+              check_explorers(clipText).await
+            } else {
+              const text_to_use = clipText.trim() ? clipText : "Un vacio, como si no hubieras copiado nada.";
+              show_message("no_address", {copied_text: text_to_use});
+            }
+          },
+          rejection => {
+            show_message("no_clipboard", {});
+          });
+        }
+      }
+
+      function delay(ms){
+        return new Promise(resolve => setTimeout(resolve, ms))
+      }
+
+      async function check_explorers(address){
+        let blockstream;
+        let mempool_space;
+        let message;
+
+        try {
+          blockstream = await (await fetch(`https://blockstream.info/api/address/${address}`)).json();
+        }catch{};
+
+        try {
+          mempool_space = await (await fetch(`https://mempool.space/api/address/${address}`)).json();
+        }catch{};
+
+        const provider = blockstream || mempool_space;
+
+        if(!provider) {
+          show_message("no_internet", {});
+        }
+
+        const in_transit = provider.mempool_stats.funded_txo_sum / 100000000;
+        const confirmed = provider.chain_stats.funded_txo_sum / 100000000;
+        const short_address = `${address.substr(0,10)}...${address.substr(-10)}`;
+
+        if(in_transit > 0){
+          update_address_links(address);
+          show_message("in_transit", {in_transit_btc_amount: in_transit, in_transit_address: short_address});
+        }else if(confirmed > 0){
+          update_address_links(address);
+          show_message("confirmed", {confirmed_btc_amount: confirmed, confirmed_address: short_address});
+        }else{
+          show_message("no_payments", {no_payments_address: address});
+          await delay(10000);
+          await check_explorers(address);
+        }
+      }
+      
+      function update_address_links(address){
+        document.querySelectorAll(".btc-address").forEach(function(a){
+          a.href = `https://mempool.space/address/${address}`
+        })
+      }
+
+      function show_message(msg_id, vars) {
+        document.querySelectorAll('.message').forEach(function(m){ m.style.display = 'none'; })
+        for(name in vars){
+          document.getElementById(name).innerHTML = vars[name];
+        }
+        document.getElementById(msg_id).style.display = 'block';
+      }
+    </script>
+  </head>
+  <body>
+    <div class="section light">
+      <div class="column">
+        <button id="paste" class="big">Ver pagos en camino</button>
+
+        <div class="message" id="how_to">
+          <p>
+            Copia la dirección bitcoin que muestra tu Chivo Wallet
+            y toca el botón de arriba para ver tus pagos en camino.
+          </p>
+          <p>
+            <img id="example_img" src="images/boton_copiar.png" />
+          </p>
+        </div>
+
+        <div style="display: none" class="message" id="in_transit">
+          <p class="large">
+          Tienes <span class="amount text-orange"><span id="in_transit_btc_amount"></span> BTC</span>
+            en camino a
+            <br/>
+            <a href="https://mempool.space/address/{}" class="btc-address" id="in_transit_address">11KFzzGtDd ... Rbvf8WVxck</a>
+          </p>
+        </div>
+
+        <div style="display: none" class="message" id="confirmed">
+          <p class="large">
+          Recibiste <span class="amount text-orange"><span id="confirmed_btc_amount"></span> BTC</span>
+            confirmado en
+            <br/>
+            <a href="https://mempool.space/address/{}" target="_blank" class="btc-address" id="confirmed_address">11KFzzGtDd ... Rbvf8WVxck</a>
+          </p>
+        </div>
+
+        <div style="display: none" class="message" id="no_payments">
+          <p class="large">
+            Todavía no tienes pagos en camino a 
+            <br/>
+            <a href="https://mempool.space/address/{}" target="_blank" class="btc-address" id="no_payments_address">11KFzzGtDd ... Rbvf8WVxck</a>
+          </p>
+          <p>
+            Volveré a consultar automáticamente en 10 segundos.
+          </p>
+        </div>
+
+        <div style="display: none" class="message" id="no_address">
+          <p>
+            No encontré ninguna dirección que hayas copiado antes,
+            solo encontré esto:
+          </p>
+          <strong id="copied_text"></strong>
+          <p>
+            <button class="small" onclick="show_message('how_to')">Intentar otra vez</button>
+          </p>
+          <p>
+            Recuerda que para copiar la dirección tienes que tocar el botón justo bajo el QR
+            con el cual te enviaron Bitcoin.
+          </p>
+          <br/>
+          <p>
+            <img id="example_img" src="images/boton_copiar.png" />
+          </p>
+        </div>
+
+        <div style="display: none" class="message" id="no_clipboard">
+          <p>
+            No pude consultar la dirección que copiaste.
+          </p>
+          <p>
+            Tienes que darme permiso de ver tu portapapeles
+            cuando tu navegador web lo pregunte.
+          </p>
+        </div>
+
+        <div style="display: none" class="message" id="no_internet">
+          <p>
+            No pudimos consultar los pagos en tránsito para tu dirección Bitcoin.
+          </p>
+          <p>
+            Revisa tu conexión a internet e intentalo nuevamente.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section dark help">
+      <div class="column">
+        <h2>¿Que es chivo.cool?</h2>
+        <p>
+          Cuando recibes bitcoin a tu Chivo Wallet el pago puede tardar en confirmarse,
+          aunque este en camino. En chivo.cool puedes ver si tienes pagos en camino.
+        </p>
+        <h2>¿Hay posibilidad de que un pago en camino se revierta?</h2>
+        <p>
+          Las posibilidades son ínfimas, pero en última instancia aceptar el pago en camino
+          queda a tu criterio y al tiempo que tengas tu
+          y quién te paga para esperar la confirmación.
+        </p>
+        <h2>Acerca de Lightning Network</h2>
+        <p>
+          Lightning Network es una tecnología que permite recibir pagos en Bitcoin de
+          forma inmediata sin esperar confirmaciones. No todos los pagadores van a poder
+          usar esta opción, pero los que pueden hacerlo son cada vez más.
+        </p>
+
+        <h2>De donde es chivo.cool</h2>
+        <p>
+          Chivo.cool es un proyecto independiente creado durante @labitconf en el salvador.
+        </p>
+        <p>
+          Chivo Cool es una web oficial de Chivo Wallet.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

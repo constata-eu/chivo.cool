@@ -1,0 +1,134 @@
+html {
+  -webkit-text-size-adjust: 100%; 
+  line-height: 1.15; 
+  font-size: 1.5em;
+}
+
+body {
+  margin: 0;
+  background: #f7f7f7;
+  font-family: 'Lato', sans-serif;
+}
+
+@media only screen and (min-width: 900px) {
+  body {
+    font-size: 1.1em;
+  }
+  .column {
+    width: 900px;
+    padding: 0;
+  }
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0;
+}
+a {
+  background-color: transparent;
+}
+img {
+  max-width: 100%;
+}
+strong {
+  font-weight: bolder;
+}
+.column {
+  margin: auto;
+  padding: 0 0.5em;
+}
+.lead {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.section {
+  padding: 2em 0;
+}
+.section h2 {
+  text-transform: uppercase;
+}
+.section a {
+  color: #020147;
+}
+.section.dark {
+  background: #020147;
+  color: #fafafa;
+}
+
+#how_to {
+  text-align: center;
+}
+#how_to img {
+  margin: 2em 0;
+}
+
+button {
+  display: block;
+  font-weight: bold;
+  border-radius: 100px;
+  border: 0;
+  color: #fafafa;
+}
+button {
+  overflow: visible;
+  text-transform: none;
+  -webkit-appearance: button;
+}
+button:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+button::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
+}
+
+button.big {
+  width: 100%;
+  margin: 1em 0 2em 0;
+  font-size: 1em;
+  padding: 1em;
+  background: #e9922b;
+}
+
+button.small {
+  margin: 1em auto;
+  font-size: 0.8em;
+  padding: 1em;
+  background: #020147;
+}
+
+.text-blue {
+  color: #020147;
+}
+
+.text-orange {
+  color: #e9922b;
+}
+
+.hidden {
+  display: none;
+}
+
+.message {
+  text-align: center;
+}
+
+.message  p.large {
+  font-size: 1.1em;
+}
+
+.message p.large .amount {
+  display: block;
+  font-weight: bold;
+  line-height: 1.5em;
+}
+
+.message p.large .btc-address {
+  font-size: 0.8em;
+  line-height: 2em;
+}
+
+.help {
+  font-size: 0.9em;
+}
