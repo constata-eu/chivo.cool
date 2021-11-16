@@ -40,6 +40,8 @@
         let mempool_space;
         let message;
 
+        show_message("loading", {});
+
         try {
           blockstream = await (await fetch(`https://blockstream.info/api/address/${address}`)).json();
         }catch{};
@@ -95,6 +97,12 @@
           <p>
             Copia la dirección bitcoin que muestra tu Chivo Wallet
             y toca el botón de arriba para ver tus pagos en camino.
+          </p>
+        </div>
+
+        <div style="display: none" class="message" id="loading">
+          <p class="large">
+            Buscando pagos...
           </p>
         </div>
 

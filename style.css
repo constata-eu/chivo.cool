@@ -61,7 +61,9 @@ strong {
   background-image: url("/images/boton_copiar.png");
   background-size: cover; 
   min-height: 700px;
+  max-width: 450px;
   padding: 0.5em;
+  margin: auto;
 }
 #how_to p {
   text-align: left;
